@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
+import { redirect } from '../../functions';
 
 /**
  * @author
@@ -9,15 +10,11 @@ import { Link, useHistory } from 'react-router-dom';
 const BookCard = ({ book, ...props }) => {
   let history = useHistory();
 
-  const redirect = (path) => {
-    history.push(path);
-  };
-
   return (
     <div className="w-56 bg-indigo-100 m-4 p-1 flex-grow rounded shadow-lg transition transform hover:scale-105">
       <div
         className="bg-indigo-300 h-72 overflow-hidden"
-        onClick={() => redirect(`/book/${book.book_id.$oid}`)}
+        onClick={() => history.push(`/book/${book._id}`)}
       >
         <img
           className="object-cover w-full h-72"

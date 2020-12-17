@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import BookAPI from '../../api/BookAPI';
 import testBooks from '../../test/book.json';
-
+import { formatDate } from '../../functions';
 /**
  * @author
  * @function Book
@@ -11,12 +12,11 @@ const Book = (props) => {
   let { id } = useParams();
   const [book, setBook] = useState(null);
 
-  const findBookById = (testBooks, id) => {
-    return testBooks.find((book) => book.book_id.$oid === id);
-  };
-
   useEffect(() => {
-    setBook(findBookById(testBooks, id));
+    BookAPI.getBookById(id).then(({ data }) => {
+      console.log(data);
+      setBook(data);
+    });
   }, [id]);
 
   return (
@@ -36,9 +36,11 @@ const Book = (props) => {
           <div className="w-6/12 flex flex-col items-start p-2">
             <div className="flex flex-row justify-center items-end">
               <p className="text-4xl">{book.book_name}</p>
-              <p className="text-base mx-2">({book.published_date})</p>
+              <p className="text-base mx-2">
+                ({formatDate(book.published_date)})
+              </p>
             </div>
-            <p className="text-2xl">{book.author.$oid}</p>
+            <p className="text-2xl">{book.author}</p>
             <p className="text-base">{book.category}</p>
             <hr className="border border-gray-700 text-center text-2xl w-full" />
             <p className="text-base text-justify">{book.description}</p>

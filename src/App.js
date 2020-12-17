@@ -1,5 +1,12 @@
 import { useEffect, useState } from 'react';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Redirect,
+  useHistory,
+} from 'react-router-dom';
+import { redirect } from './functions.js';
 import UserAPI from './api/UserAPI';
 import './App.css';
 import Login from './components/Auth/Login';
@@ -8,6 +15,8 @@ import Header from './components/Header/Header';
 import Home from './components/Home/Home';
 import context from './context/context';
 import Cookies from 'universal-cookie';
+import Register from './components/Auth/Register.js';
+import ConsumerPage from './components/ConsumerPage/ConsumerPage.js';
 
 function App() {
   const [token, setToken] = useState(null);
@@ -24,20 +33,28 @@ function App() {
     }
   };
 
-  const logIn = ({ token, expires }) => {
-    console.log({ token, expires });
+  const logIn = ({ token, expires }, callback) => {
+    // console.log({ token, expires });
     new Cookies().set('token', token, {
       path: '/',
       expires: new Date(expires),
     });
     setToken(token);
     getUser(token);
+
+    if (callback) {
+      callback();
+    }
   };
 
-  const logOut = () => {
+  const logOut = (callback) => {
     new Cookies().remove('token');
     setToken(null);
     setUser(null);
+
+    if (callback) {
+      callback();
+    }
   };
 
   useEffect(() => {
@@ -53,31 +70,31 @@ function App() {
 
   return (
     <div className="App">
-      <context.Provider
-        value={{
-          token,
-          user,
-          logIn,
-          logOut,
-          setUser,
-        }}
-      >
-        <BrowserRouter>
+      <BrowserRouter>
+        <context.Provider
+          value={{
+            token,
+            user,
+            logIn,
+            logOut,
+            setUser,
+          }}
+        >
           <Header />
           <Switch>
             <Route path="/" component={Home} exact />
             <Route path="/book/:id" component={Book} exact />
-            <Route path="/shop" component={null} />
+            {/* <Route path="/shop" component={null} /> */}
             <Route path="/about" component={null} />
-            <Route path="/service" component={null} />
-            <Route path="/contact" component={null} />
+            {/* <Route path="/service" component={null} />
+            <Route path="/contact" component={null} /> */}
             <Route path="/login" component={Login} />
-            <Route path="/register" component={null} />
-            <Route path="/dashboard" component={null} />
-            <Route path="/signout" component={null} />
+            <Route path="/register" component={Register} />
+            <Route path="/profile" component={ConsumerPage} />
+            {/* <Route path="/signout" component={null} /> */}
           </Switch>
-        </BrowserRouter>
-      </context.Provider>
+        </context.Provider>
+      </BrowserRouter>
     </div>
   );
 }

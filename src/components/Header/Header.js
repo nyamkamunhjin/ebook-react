@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import context from '../../context/context';
+import { redirect } from '../../functions';
 
 /**
  * @author
@@ -8,15 +9,12 @@ import context from '../../context/context';
  **/
 
 const Header = (props) => {
-  let history = useHistory();
+  const history = useHistory();
 
   const { user, logOut } = useContext(context);
-  const redirect = (path) => {
-    history.push(path);
-  };
 
   return (
-    <nav className="py-2 flex flex-row items-center bg-indigo-100 w-full">
+    <nav className="py-2 flex flex-row items-center bg-indigo-100 w-full shadow-lg">
       <ul className="flex flex-row items-center my-3">
         <li className="mx-5 hover:text-indigo-600 active:text-indigo-600">
           <Link to="/">Home Page</Link>
@@ -24,18 +22,23 @@ const Header = (props) => {
         <li className="mx-5 hover:text-indigo-600 active:text-indigo-600">
           <Link to="/about">About us</Link>
         </li>
-        <li className="mx-5 hover:text-indigo-600 active:text-indigo-600">
-          <Link to="/profile">Profile</Link>
-        </li>
+        {user && (
+          <li className="mx-5 hover:text-indigo-600 active:text-indigo-600">
+            <Link to="/profile">Profile</Link>
+          </li>
+        )}
       </ul>
       {user ? (
-        <button className="btn-indigo ml-auto mr-4" onClick={() => logOut()}>
+        <button
+          className="btn-indigo ml-auto mr-4"
+          onClick={() => logOut(() => history.push('/login'))}
+        >
           Logout
         </button>
       ) : (
         <button
           className="btn-indigo ml-auto mr-4"
-          onClick={() => redirect('/login')}
+          onClick={() => history.push('/login')}
         >
           Login
         </button>
